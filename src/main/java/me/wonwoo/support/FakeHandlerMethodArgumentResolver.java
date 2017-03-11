@@ -12,6 +12,12 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class FakeHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
+  private final String prefix;
+
+  public FakeHandlerMethodArgumentResolver(String prefix) {
+    this.prefix = prefix;
+  }
+
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
     return FakeParam.class.isAssignableFrom(parameter.getParameterType());
@@ -21,6 +27,6 @@ public class FakeHandlerMethodArgumentResolver implements HandlerMethodArgumentR
   public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
     HttpServletRequest httpServletRequest = (HttpServletRequest) nativeWebRequest.getNativeRequest();
     final String requestURI = httpServletRequest.getRequestURI();
-    return new FakeParam(requestURI.replace("/api", ""),httpServletRequest.getMethod());
+    return new FakeParam(requestURI.replaceFirst(prefix, ""), httpServletRequest.getMethod());
   }
 }

@@ -20,7 +20,7 @@ public class FakeHandlerMethodArgumentResolverTests {
 
   private MethodParameter supportedMethodParameter;
 
-  private FakeHandlerMethodArgumentResolver resolver = new FakeHandlerMethodArgumentResolver();
+  private FakeHandlerMethodArgumentResolver resolver = new FakeHandlerMethodArgumentResolver("/api");
 
   @Before
   public void setUp() throws Exception {

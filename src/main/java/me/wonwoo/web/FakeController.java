@@ -1,8 +1,10 @@
 package me.wonwoo.web;
 
 import lombok.RequiredArgsConstructor;
+import me.wonwoo.core.domain.Fake;
 import me.wonwoo.core.repository.FakeRepository;
 import me.wonwoo.support.FakeParam;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,5 +29,11 @@ public class FakeController {
     return fakeRepository.findByUriAndMethod(fakeParam.getUri(), fakeParam.getMethod())
       .orElseThrow(() -> new NotFoundException(fakeParam))
       .getResponse();
+  }
+
+  //// FIXME: 2017. 3. 11. test
+  @PostMapping("/")
+  public void test() {
+    fakeRepository.save(new Fake("/test", "GET", "{\"id\":\"wonwoo\"}"));
   }
 }

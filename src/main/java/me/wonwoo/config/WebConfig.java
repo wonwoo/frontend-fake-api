@@ -2,6 +2,7 @@ package me.wonwoo.config;
 
 import java.util.List;
 import me.wonwoo.support.FakeHandlerMethodArgumentResolver;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -11,9 +12,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+  @Value("${fake.prefix:/api}")
+  private String prefix;
+
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-    argumentResolvers.add(new FakeHandlerMethodArgumentResolver());
-
+    argumentResolvers.add(new FakeHandlerMethodArgumentResolver(prefix));
   }
 }
