@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,7 +43,7 @@ public class FakeControllerTests {
   @Test
   public void getOkTest() throws Exception {
     given(fakeRepository.findByUriAndMethod(any(), any()))
-      .willReturn(Optional.of(new Fake("/test", "GET", HttpStatus.OK, "{\"id\":\"wonwoo\"}")));
+      .willReturn(Optional.of(new Fake("/test", HttpMethod.GET, HttpStatus.OK, "{\"id\":\"wonwoo\"}")));
     mockMvc.perform(get("/api/test"))
       .andExpect(status().isOk())
     .andExpect(jsonPath("$.id", is("wonwoo")));
@@ -52,7 +53,7 @@ public class FakeControllerTests {
   @Test
   public void postCreatedTest() throws Exception {
     given(fakeRepository.findByUriAndMethod(any(), any()))
-      .willReturn(Optional.of(new Fake("/test", "POST", HttpStatus.CREATED, "{\"id\":\"wonwoo\"}")));
+      .willReturn(Optional.of(new Fake("/test", HttpMethod.POST, HttpStatus.CREATED, "{\"id\":\"wonwoo\"}")));
     mockMvc.perform(get("/api/test"))
       .andExpect(status().isCreated())
       .andExpect(jsonPath("$.id", is("wonwoo")));

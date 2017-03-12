@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -22,7 +23,7 @@ public class SampleRepositoryTests {
 
   @Test
   public void contextLoads() {
-    final Fake fake = fakeRepository.save(new Fake("/test","GET", HttpStatus.OK, "{\"id\":\"wonwoo\"}"));
+    final Fake fake = fakeRepository.save(new Fake("/test", HttpMethod.GET, HttpStatus.OK, "{\"id\":\"wonwoo\"}"));
     assertThat(fake.getId()).isNotNull();
     assertThat(fake.getMethod()).isEqualTo("GET");
     assertThat(fake.getHttpStatus()).isEqualTo(HttpStatus.OK);
@@ -31,7 +32,7 @@ public class SampleRepositoryTests {
 
   @Test
   public void findByName() {
-    fakeRepository.save(new Fake("/test","GET",HttpStatus.OK, "{\"id\":\"wonwoo\"}"));
+    fakeRepository.save(new Fake("/test", HttpMethod.GET, HttpStatus.OK, "{\"id\":\"wonwoo\"}"));
     final Fake fake = fakeRepository.findByUriAndMethod("/test", "GET").get();
     assertThat(fake.getId()).isNotNull();
     assertThat(fake.getMethod()).isEqualTo("GET");

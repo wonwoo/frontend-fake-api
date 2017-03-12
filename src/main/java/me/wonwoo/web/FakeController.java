@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import me.wonwoo.core.domain.Fake;
 import me.wonwoo.core.repository.FakeRepository;
 import me.wonwoo.support.FakeParam;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;

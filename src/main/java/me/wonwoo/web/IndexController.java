@@ -2,9 +2,11 @@ package me.wonwoo.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.wonwoo.core.domain.Fake;
 import me.wonwoo.core.repository.FakeRepository;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,11 +32,18 @@ public class IndexController {
   }
 
   @PostMapping("/fakes")
-  public void save(@RequestBody FakeForm fakeForm) {
+  public String save(@RequestBody @Valid FakeForm fakeForm) {
+    if (fakeRepository.findByUriAndMethod(fakeForm.getUri(), fakeForm.getMethod())
+      .isPresent()) {
+      throw new DuplicateException(fakeForm);
+    }
+
     fakeRepository.save(new Fake(fakeForm.getUri(),
-      fakeForm.getMethod(),
+      HttpMethod.resolve(fakeForm.getMethod()),
       HttpStatus.valueOf(fakeForm.getStatusCode()),
       isValidJson(fakeForm.getData())));
+
+    return "index";
   }
 
   private String isValidJson(final String json) {

@@ -17,7 +17,7 @@
     <div class="panel list-group" th:each="fake,i : ${fakes}">
 
         <a href="#" class="list-group-item" data-toggle="collapse"
-           th:data-target="'#sm' + ${i.index}" data-parent="#menu" th:switch="${fake.method}">
+           th:data-target="'#sm' + ${i.index}" data-parent="#menu" th:switch="${fake.method.name()}">
             <span th:text="${fake.uri}"></span>
             <span th:case="'GET'" th:text="${fake.method}" class="label label-primary"></span>
             <span th:case="'POST'" th:text="${fake.method}" class="label label-success"></span>
