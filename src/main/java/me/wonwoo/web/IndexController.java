@@ -50,12 +50,12 @@ public class IndexController {
       throw new DuplicateException(fakeForm);
     }
 
-    fakeRepository.save(new Fake(fakeForm.getUri(),
+    final Fake fake = fakeRepository.save(new Fake(fakeForm.getUri(),
       HttpMethod.resolve(fakeForm.getMethod()),
       HttpStatus.valueOf(fakeForm.getStatusCode()),
       isValidJson(fakeForm.getData())));
 
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok().body(fake);
   }
 
   private String isValidJson(final String json) {
