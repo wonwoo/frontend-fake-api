@@ -16,7 +16,7 @@ public class Fake {
   private String id;
   private final String uri;
   private final HttpMethod method;
-  private final HttpStatus httpStatus;
+  private final HttpStatus statusCode;
   private final String data;
 
 }

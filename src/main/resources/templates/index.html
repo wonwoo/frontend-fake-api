@@ -24,11 +24,10 @@
             <span th:case="'PUT'" th:text="${fake.method}" class="label label-info"></span>
             <span th:case="'PATCH'" th:text="${fake.method}" class="label label-warning"></span>
             <span th:case="'DELETE'" th:text="${fake.method}" class="label label-danger"></span>
+            <span th:text="${fake.statusCode.name() + ' / ' + fake.statusCode.value()}"></span>
         </a>
         <div th:id="'sm' + ${i.index}" class="sublinks collapse">
-            <div class="form-group">
-                <textarea th:text="${fake.data}"  class="form-control autosize"></textarea>
-            </div>
+            <textarea th:text="${fake.data}"  class="form-control autosize"></textarea>
         </div>
     </div>
 </div>

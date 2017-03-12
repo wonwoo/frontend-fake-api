@@ -26,7 +26,7 @@ public class SampleRepositoryTests {
     final Fake fake = fakeRepository.save(new Fake("/test", HttpMethod.GET, HttpStatus.OK, "{\"id\":\"wonwoo\"}"));
     assertThat(fake.getId()).isNotNull();
     assertThat(fake.getMethod()).isEqualTo(HttpMethod.GET);
-    assertThat(fake.getHttpStatus()).isEqualTo(HttpStatus.OK);
+    assertThat(fake.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(fake.getData()).isEqualTo("{\"id\":\"wonwoo\"}");
   }
 
@@ -36,7 +36,7 @@ public class SampleRepositoryTests {
     final Fake fake = fakeRepository.findByUriAndMethod("/test", "GET").get();
     assertThat(fake.getId()).isNotNull();
     assertThat(fake.getMethod()).isEqualTo(HttpMethod.GET);
-    assertThat(fake.getHttpStatus()).isEqualTo(HttpStatus.OK);
+    assertThat(fake.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(fake.getData()).isEqualTo("{\"id\":\"wonwoo\"}");
   }
 }
