@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -39,12 +40,22 @@ public class FakeControllerTests {
   private FakeRepository fakeRepository;
 
   @Test
-  public void categoriesTest() throws Exception {
+  public void getOkTest() throws Exception {
     given(fakeRepository.findByUriAndMethod(any(), any()))
-      .willReturn(Optional.of(new Fake("/test", "GET", "{\"id\":\"wonwoo\"}")));
+      .willReturn(Optional.of(new Fake("/test", "GET", HttpStatus.OK, "{\"id\":\"wonwoo\"}")));
     mockMvc.perform(get("/api/test"))
       .andExpect(status().isOk())
     .andExpect(jsonPath("$.id", is("wonwoo")));
+    verify(fakeRepository, atLeastOnce()).findByUriAndMethod("/test", "GET");
+  }
+
+  @Test
+  public void postCreatedTest() throws Exception {
+    given(fakeRepository.findByUriAndMethod(any(), any()))
+      .willReturn(Optional.of(new Fake("/test", "POST", HttpStatus.CREATED, "{\"id\":\"wonwoo\"}")));
+    mockMvc.perform(get("/api/test"))
+      .andExpect(status().isCreated())
+      .andExpect(jsonPath("$.id", is("wonwoo")));
     verify(fakeRepository, atLeastOnce()).findByUriAndMethod("/test", "GET");
   }
 }

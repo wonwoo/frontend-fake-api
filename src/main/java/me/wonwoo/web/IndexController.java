@@ -5,6 +5,7 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import me.wonwoo.core.domain.Fake;
 import me.wonwoo.core.repository.FakeRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,10 +29,12 @@ public class IndexController {
     return "index";
   }
 
-  //FIXME test
-  @PostMapping("/test")
+  @PostMapping("/fakes")
   public void save(@RequestBody FakeForm fakeForm) {
-    fakeRepository.save(new Fake(fakeForm.getUri(), fakeForm.getMethod(), isValidJson(fakeForm.getData())));
+    fakeRepository.save(new Fake(fakeForm.getUri(),
+      fakeForm.getMethod(),
+      HttpStatus.valueOf(fakeForm.getStatusCode()),
+      isValidJson(fakeForm.getData())));
   }
 
   private String isValidJson(final String json) {

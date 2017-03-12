@@ -10,6 +10,7 @@ public class FakeForm {
 
   private String uri;
   private String method;
+  private int statusCode;
   private String data;
 
 }
