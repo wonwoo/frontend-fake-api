@@ -14,5 +14,5 @@ public class Fake {
   private String id;
   private final String uri;
   private final String method;
-  private final String response;
+  private final String data;
 }

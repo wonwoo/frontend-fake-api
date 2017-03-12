@@ -1,6 +1,5 @@
 package me.wonwoo.core.repository;
 
-import java.util.List;
 import me.wonwoo.core.domain.Fake;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +24,7 @@ public class SampleRepositoryTests {
     final Fake fake = fakeRepository.save(new Fake("/test","GET", "{\"id\":\"wonwoo\"}"));
     assertThat(fake.getId()).isNotNull();
     assertThat(fake.getMethod()).isEqualTo("GET");
-    assertThat(fake.getResponse()).isEqualTo("{\"id\":\"wonwoo\"}");
+    assertThat(fake.getData()).isEqualTo("{\"id\":\"wonwoo\"}");
   }
 
   @Test
@@ -34,6 +33,6 @@ public class SampleRepositoryTests {
     final Fake fake = fakeRepository.findByUriAndMethod("/test", "GET").get();
     assertThat(fake.getId()).isNotNull();
     assertThat(fake.getMethod()).isEqualTo("GET");
-    assertThat(fake.getResponse()).isEqualTo("{\"id\":\"wonwoo\"}");
+    assertThat(fake.getData()).isEqualTo("{\"id\":\"wonwoo\"}");
   }
 }
