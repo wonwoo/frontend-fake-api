@@ -14,28 +14,30 @@
 </head>
 <body>
 <div id="menu">
-    <div class="panel list-group" th:each="fake : ${fakes}">
+    <div class="panel list-group" th:each="fake,i : ${fakes}">
 
-        <a href="#" class="list-group-item" data-toggle="collapse" data-target="#sm" data-parent="#menu">
+        <a href="#" class="list-group-item" data-toggle="collapse"
+           th:data-target="'#sm' + ${i.index}" data-parent="#menu" th:switch="${fake.method}">
             <span th:text="${fake.uri}"></span>
+            <span th:case="'GET'" th:text="${fake.method}" class="label label-primary"></span>
+            <span th:case="'POST'" th:text="${fake.method}" class="label label-success"></span>
+            <span th:case="'PUT'" th:text="${fake.method}" class="label label-info"></span>
+            <span th:case="'PATCH'" th:text="${fake.method}" class="label label-warning"></span>
+            <span th:case="'DELETE'" th:text="${fake.method}" class="label label-danger"></span>
         </a>
-        <div id="sm" class="sublinks collapse">
+        <div th:id="'sm' + ${i.index}" class="sublinks collapse">
             <div class="form-group">
-                <textarea onkeydown="resize(this)" onkeyup="resize(this)" class="form-control autosize" id="json"></textarea>
+                <textarea th:text="${fake.data}"  class="form-control autosize"></textarea>
             </div>
         </div>
     </div>
 </div>
 </body>
 <script>
-
-    var resize = function(obj) {
-        obj.style.height = "1px";
-        obj.style.height = (20+obj.scrollHeight)+"px";
+    var test1 = function (obj) {
+        console.log(obj);
+        obj.value = JSON.stringify(JSON.parse(obj.value), undefined, 2);
     }
-//    $.get("/test", function (data) {
-//        console.log(data);
-//        document.getElementById("json").innerHTML = JSON.stringify(JSON.parse(data[0].data), undefined, 2);
-//    })
+
 </script>
 </html>
