@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>HOME</title>
 
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
@@ -9,34 +10,110 @@
     <script th:src="@{/js/bootstrap.min.js}"></script>
 
     <style>
-        textarea.autosize { min-height: 50px; }
+        .table td, th {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-<div id="menu">
-    <div class="panel list-group" th:each="fake,i : ${fakes}">
 
-        <a href="#" class="list-group-item" data-toggle="collapse"
-           th:data-target="'#sm' + ${i.index}" data-parent="#menu" th:switch="${fake.method.name()}">
-            <span th:text="${fake.uri}"></span>
-            <span th:case="'GET'" th:text="${fake.method}" class="label label-primary"></span>
-            <span th:case="'POST'" th:text="${fake.method}" class="label label-success"></span>
-            <span th:case="'PUT'" th:text="${fake.method}" class="label label-info"></span>
-            <span th:case="'PATCH'" th:text="${fake.method}" class="label label-warning"></span>
-            <span th:case="'DELETE'" th:text="${fake.method}" class="label label-danger"></span>
-            <span th:text="${fake.statusCode.name() + ' / ' + fake.statusCode.value()}"></span>
-        </a>
-        <div th:id="'sm' + ${i.index}" class="sublinks collapse">
-            <textarea th:text="${fake.data}"  class="form-control autosize"></textarea>
+<div class="container">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Fake</a>
+            </div>
+        </div>
+    </nav>
+    <button type="button" class="btn btn-info btn-lg pull-right" data-toggle="modal" data-target="#myModal">add</button>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Path</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Status Code</th>
+            <th>Edit</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="fake,i : ${fakes}">
+            <th th:text="${fake.uri}"></th>
+            <td th:switch="${fake.method.name()}">
+                <span th:case="'GET'" th:text="${fake.method}" class="label label-primary"></span>
+                <span th:case="'POST'" th:text="${fake.method}" class="label label-success"></span>
+                <span th:case="'PUT'" th:text="${fake.method}" class="label label-info"></span>
+                <span th:case="'PATCH'" th:text="${fake.method}" class="label label-warning"></span>
+                <span th:case="'DELETE'" th:text="${fake.method}" class="label label-danger"></span>
+            </td>
+            <td th:text="${fake.statusCode.value()}"></td>
+            <td th:text="${fake.statusCode.name()}"></td>
+            <td><button type="button" th:onclick="'edit(\'' + ${fake.id} + '\');'" class="btn btn-warning" data-toggle="modal" data-target="#myModal">Edit</button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="uri">Path</label>
+                    <input type="text" id="uri" name="uri" class="form-control" placeholder="/foo">
+                </div>
+                <div class="form-group">
+                    <label for="method">Method</label>
+                    <select class="form-control" id="method" name="method">
+                        <option th:value="GET">GET</option>
+                        <option th:value="POST">POST</option>
+                        <option th:value="PUT">PUT</option>
+                        <option th:value="PATCH">PATCH</option>
+                        <option th:value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="statusCode">Status Code</label>
+                    <select class="form-control" id="statusCode" name="statusCode">
+                        <option th:value="OK">200</option>
+                        <option th:value="CREATED">201</option>
+                        <option th:value="NO_CONTENT">204</option>
+                        <option th:value="BAD_REQUEST">400</option>
+                        <option th:value="UNAUTHORIZED">401</option>
+                        <option th:value="FORBIDDEN">403</option>
+                        <option th:value="NOT_FOUND">404</option>
+                        <option th:value="INTERNAL_SERVER_ERROR">500</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data">Example textarea</label>
+                    <textarea class="form-control" id="data" name="data" rows="10"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" class="btn btn-info" value="Submit">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
 </body>
 <script>
-    var test1 = function (obj) {
-        console.log(obj);
-        obj.value = JSON.stringify(JSON.parse(obj.value), undefined, 2);
-    }
 
+    var edit = function(id) {
+        $.get("/" + id, function(response) {
+            console.log(response);
+            $("#uri").val(response.uri);
+            $("#data").val(JSON.stringify(JSON.parse(response.data), undefined, 2));
+            $("#method").val(response.method);
+            console.log(response.statusCode)
+            $("#statusCode").val(response.statusCode);
+        });
+    }
 </script>
 </html>

@@ -1,7 +1,6 @@
 package me.wonwoo.web;
 
 import lombok.RequiredArgsConstructor;
-import me.wonwoo.support.FakeParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
