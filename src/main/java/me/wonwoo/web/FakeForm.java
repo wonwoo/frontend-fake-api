@@ -17,7 +17,7 @@ public class FakeForm {
   private String method;
 
   @NotNull
-  private int statusCode;
+  private String statusCode;
 
   @NotBlank
   private String data;

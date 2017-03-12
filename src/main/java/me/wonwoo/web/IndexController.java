@@ -2,20 +2,17 @@ package me.wonwoo.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.concurrent.ForkJoinPool;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.wonwoo.core.domain.Fake;
 import me.wonwoo.core.repository.FakeRepository;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,9 +41,9 @@ public class IndexController {
   }
 
   @PostMapping("/fakes")
-  public String save(@ModelAttribute @Valid FakeForm fakeForm, BindingResult bindingResult) {
+  public ResponseEntity<?> save(@RequestBody @Valid FakeForm fakeForm, BindingResult bindingResult) {
     if(bindingResult.hasErrors()){
-      return "index";
+      return ResponseEntity.badRequest().build();
     }
     if (fakeRepository.findByUriAndMethod(fakeForm.getUri(), fakeForm.getMethod())
       .isPresent()) {
@@ -58,7 +55,7 @@ public class IndexController {
       HttpStatus.valueOf(fakeForm.getStatusCode()),
       isValidJson(fakeForm.getData())));
 
-    return "redirect:/#/";
+    return ResponseEntity.ok().build();
   }
 
   private String isValidJson(final String json) {
