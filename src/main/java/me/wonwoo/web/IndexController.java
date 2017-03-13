@@ -12,9 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
@@ -29,33 +31,48 @@ public class IndexController {
   private final ObjectMapper objectMapper;
 
   @GetMapping("/")
-  public String home(Model model, FakeForm fakeForm) {
+  public String home(Model model) {
     model.addAttribute("fakes", fakeRepository.findAll());
-    model.addAttribute("fakeForm", fakeForm);
     return "index";
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<?> home(@PathVariable String id) {
-    return ResponseEntity.ok(fakeRepository.findOne(id)) ;
+    return ResponseEntity.ok(fakeRepository.findOne(id));
   }
 
   @PostMapping("/fakes")
   public ResponseEntity<?> save(@RequestBody @Valid FakeForm fakeForm, BindingResult bindingResult) {
-    if(bindingResult.hasErrors()){
+    if (bindingResult.hasErrors()) {
       return ResponseEntity.badRequest().build();
     }
     if (fakeRepository.findByUriAndMethod(fakeForm.getUri(), fakeForm.getMethod())
       .isPresent()) {
       throw new DuplicateException(fakeForm);
     }
-
-    final Fake fake = fakeRepository.save(new Fake(fakeForm.getUri(),
+    return ResponseEntity.ok().body(fakeRepository.save(new Fake(fakeForm.getUri(),
       HttpMethod.resolve(fakeForm.getMethod()),
       HttpStatus.valueOf(fakeForm.getStatusCode()),
-      isValidJson(fakeForm.getData())));
+      isValidJson(fakeForm.getData()))));
+  }
 
-    return ResponseEntity.ok().body(fake);
+  @PutMapping("/fakes/{id}")
+  public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid FakeForm fakeForm, BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      return ResponseEntity.badRequest().build();
+    }
+    final Fake fake = new Fake(fakeForm.getUri(),
+      HttpMethod.resolve(fakeForm.getMethod()),
+      HttpStatus.valueOf(fakeForm.getStatusCode()),
+      isValidJson(fakeForm.getData()));
+    fake.setId(id);
+    return ResponseEntity.ok().body(fakeRepository.save(fake));
+  }
+
+  @DeleteMapping("/fakes/{id}")
+  public ResponseEntity<?> delete(@PathVariable String id) {
+    fakeRepository.delete(id);
+    return ResponseEntity.ok().build();
   }
 
   private String isValidJson(final String json) {

@@ -27,7 +27,7 @@
             </div>
         </div>
     </nav>
-    <button type="button" class="btn btn-info btn-lg pull-right" data-toggle="modal" data-target="#myModal">add</button>
+    <button type="button" class="btn btn-info btn-lg pull-right" data-toggle="modal" data-target="#fakeModal">add</button>
     <table class="table table-striped">
         <thead>
         <tr>
@@ -36,6 +36,7 @@
             <th>Status Code</th>
             <th>Status</th>
             <th>Edit</th>
+            <th>Delete</th>
         </tr>
         </thead>
         <tbody>
@@ -50,13 +51,14 @@
             </td>
             <td th:text="${fake.statusCode.value()}"></td>
             <td th:text="${fake.statusCode.name()}"></td>
-            <td><button type="button" th:onclick="'edit(\'' + ${fake.id} + '\');'" class="btn btn-warning" data-toggle="modal" data-target="#myModal">Edit</button></td>
+            <td><button type="button" th:onclick="'editViewer(\'' + ${fake.id} + '\');'" class="btn btn-warning" data-toggle="modal" data-target="#fakeModal">Edit</button></td>
+            <td><button type="button" th:onclick="'deleteConfirm(\'' + ${fake.id} + '\');'" class="btn btn-danger">Delete</button></td>
         </tr>
         </tbody>
     </table>
 </div>
 
-<div id="myModal" class="modal fade" role="dialog">
+<div id="fakeModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
@@ -104,43 +106,97 @@
                 <input type="button" class="btn btn-info" th:onclick="'save()'" value="Submit">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
+            <input type="hidden" id="id">
         </div>
     </div>
 </div>
 </body>
 <script>
 
-    var edit = function (id) {
+    $('#fakeModal').on('hidden.bs.modal', function () {
+        clear();
+    });
+
+    var _delete = function(id) {
+        request('/fakes/'+id, 'DELETE',function(data) {
+            window.location.reload();
+        });
+    }
+    var deleteConfirm = function(id) {
+        if (confirm("정말 삭제하시겠습니까??") == true) {
+            _delete(id)
+        } else {
+            return;
+        }
+    };
+
+    var clear = function() {
+        $("#id").val("");
+        $("#uri").val("");
+        $("#data").val("");
+        $("#method").val("");
+        $("#statusCode").val("");
+    };
+
+    var editViewer = function (id) {
         $.get("/" + id, function(response) {
+            $("#id").val(response.id);
             $("#uri").val(response.uri);
             $("#data").val(FormatTextarea(response.data));
             $("#method").val(response.method);
             $("#statusCode").val(response.statusCode);
         });
-    }
-    
+    };
+
     var save = function() {
-        $.ajax({
-            contentType: 'application/json',
-            url: '/fakes',
-            type: 'POST',
-            data: JSON.stringify({
-                "uri": $("#uri").val(),
-                "data" : $("#data").val(),
-                "method" : $("#method").val(),
-                "statusCode" : $("#statusCode").val()
-            }),
-            dataType: 'json',
-            success: function(data){
-                window.location.reload();
-            },
-            error: function(error){
-                alert(error.responseJSON.message);
-            },
+        var id = $("#id").val();
+        var uri = $("#uri").val();
+        var data = $("#data").val();
+        var method = $("#method").val();
+        var statusCode = $("#statusCode").val();
+
+        if(uri == "" || data == "" || method == "" || statusCode == "") {
+            alert("필수 값을 입력해주세요!!");
+            return;
+        }
+
+        var json = JSON.stringify({
+            "uri": uri,
+            "data": data,
+            "method": method,
+            "statusCode": statusCode
         });
-    }
+
+        if(id == "") {
+            request('/fakes', 'POST', function(data) {
+                window.location.reload();
+            }, json);
+        } else {
+            request('/fakes/' + id, 'PUT', function(data) {
+                window.location.reload();
+            }, json);
+        }
+    };
+
     var format = function() {
         $("#data").val(FormatTextarea($("#data").val()));
-    }
+    };
+
+    var request = function(uri, type, callback, data) {
+        $.ajax({
+            contentType: 'application/json',
+            url: uri,
+            type: type,
+            data: data,
+            success: function(data){
+                callback(data);
+            },
+            error: function(error){
+                console.log(error);
+                alert(error.responseJSON.message);
+            }
+        });
+    };
+
 </script>
 </html>
