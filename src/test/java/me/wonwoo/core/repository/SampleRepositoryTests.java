@@ -22,7 +22,7 @@ public class SampleRepositoryTests {
   private FakeRepository fakeRepository;
 
   @Test
-  public void contextLoads() {
+  public void saveTest() {
     final Fake fake = fakeRepository.save(new Fake("/test", HttpMethod.GET, HttpStatus.OK, "{\"id\":\"wonwoo\"}"));
     assertThat(fake.getId()).isNotNull();
     assertThat(fake.getMethod()).isEqualTo(HttpMethod.GET);
