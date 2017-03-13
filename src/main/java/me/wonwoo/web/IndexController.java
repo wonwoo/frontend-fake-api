@@ -37,7 +37,7 @@ public class IndexController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<?> home(@PathVariable String id) {
+  public ResponseEntity<?> findById(@PathVariable String id) {
     return ResponseEntity.ok(fakeRepository.findOne(id));
   }
 
