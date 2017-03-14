@@ -1,4 +1,7 @@
 //http://joncom.be/code/javascript-json-formatter/
+/**
+ * @return {string}
+ */
 function FormatTextarea(sJSON) {
     if (sJSON.length > 0) {
         try {
@@ -6,6 +9,7 @@ function FormatTextarea(sJSON) {
             return FormatJSON(oJSON);
         } catch(sError) {
             alert("You are attempting to parse invalid JSON.")
+            return "";
         }
     } else {
         alert("<Bono>I still haven't found what I'm looking for</Bono>");

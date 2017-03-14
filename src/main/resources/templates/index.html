@@ -193,7 +193,10 @@
     };
 
     var format = function() {
-        $("#data").val(FormatTextarea($("#data").val()));
+        var value = FormatTextarea($("#data").val());
+        if(value != "") {
+            $("#data").val(value);
+        }
     };
 
     var request = function(uri, type, callback, data) {
