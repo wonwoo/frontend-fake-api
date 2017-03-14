@@ -1,5 +1,6 @@
 package me.wonwoo.core.domain;
 
+import java.util.Date;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,9 +15,28 @@ import org.springframework.http.HttpStatus;
 public class Fake {
   @Id
   private String id;
-  private final String uri;
-  private final HttpMethod method;
-  private final HttpStatus statusCode;
-  private final String data;
+  private String uri;
+  private HttpMethod method;
+  private HttpStatus statusCode;
+  private String data;
+  private Date date;
 
+  Fake(){
+
+  }
+
+  public Fake(String uri, HttpMethod method, HttpStatus statusCode, String data) {
+    this.uri = uri;
+    this.method = method;
+    this.statusCode = statusCode;
+    this.data = data;
+  }
+
+  public Fake(String uri, HttpMethod method, HttpStatus statusCode, String data, Date date) {
+    this.uri = uri;
+    this.method = method;
+    this.statusCode = statusCode;
+    this.data = data;
+    this.date = date;
+  }
 }

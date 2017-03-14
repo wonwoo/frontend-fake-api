@@ -35,6 +35,7 @@
             <th>Method</th>
             <th>Status Code</th>
             <th>Status</th>
+            <th>TEST</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -51,6 +52,7 @@
             </td>
             <td th:text="${fake.statusCode.value()}"></td>
             <td th:text="${fake.statusCode.name()}"></td>
+            <td><button type="button" th:onclick="'testViewer(\'' + ${fake.id} + '\');'" class="btn btn-info" data-toggle="modal" data-target="#testModal">Test</button></td>
             <td><button type="button" th:onclick="'editViewer(\'' + ${fake.id} + '\');'" class="btn btn-warning" data-toggle="modal" data-target="#fakeModal">Edit</button></td>
             <td><button type="button" th:onclick="'deleteConfirm(\'' + ${fake.id} + '\');'" class="btn btn-danger">Delete</button></td>
         </tr>
@@ -78,7 +80,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Add</h4>
+                <h4 class="modal-title">Edit</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -124,19 +126,58 @@
         </div>
     </div>
 </div>
+
+
+
+<div id="testModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Test</h4>
+            </div>
+            <div class="modal-body">
+                <pre>
+                    <code id="testCode">
+
+                    </code>
+                </pre>
+                <div class="form-group ace_editor ace-jsoneditor">
+                    <label for="response">Response </label>
+                    <span id="testStatus"></span>
+                    <textarea class="form-control" id="response" name="response" rows="10"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-info" th:onclick="'call()'" value="Call">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            <input id="testUri" type="hidden">
+            <input id="testMethod" type="hidden">
+        </div>
+    </div>
+</div>
+
 </body>
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let prefix = [[${prefix}]];
+    /*]]>*/
 
     $('#fakeModal').on('hidden.bs.modal', function () {
         clear();
     });
+    $('#testModal').on('hidden.bs.modal', function () {
+        clear();
+    });
 
-    var _delete = function(id) {
+    let _delete = function(id) {
         request('/fakes/'+id, 'DELETE',function(data) {
             window.location.reload();
         });
     }
-    var deleteConfirm = function(id) {
+    let deleteConfirm = function(id) {
         if (confirm("정말 삭제하시겠습니까??") == true) {
             _delete(id)
         } else {
@@ -144,15 +185,55 @@
         }
     };
 
-    var clear = function() {
+    let clear = function() {
         $("#id").val("");
+        $("#testUri").val("");
+        $("#testMethod").val("");
         $("#uri").val("");
         $("#data").val("");
+        $("#response").val("");
         $("#method").val("GET");
         $("#statusCode").val("OK");
+        $("#testStatus").text("");
     };
 
-    var editViewer = function (id) {
+    let call = function(){
+        $("#testId").val();
+        $.ajax({
+            contentType: 'application/json',
+            url:  prefix + $("#testUri").val(),
+            type: $("#testMethod").val(),
+            complete : function(data) {
+                $("#response").val(data.responseText);
+                $("#testStatus").text(data.status);
+            }
+        });
+    }
+
+    let testViewer = function (id) {
+        $.get("/" + id, function(response) {
+            $("#testUri").val(response.uri);
+            $("#testMethod").val(response.method);
+            let $testCode = $("#testCode");
+            let code =
+`
+    $.ajax({
+        contentType: 'application/json',
+        url: ${prefix}${response.uri},
+        type: ${response.method},
+        success: function(data){
+            //do something
+        },
+        error: function(error){
+            //do something
+        }
+    });
+`;
+            $testCode.text(code);
+        });
+    };
+
+    let editViewer = function (id) {
         $.get("/" + id, function(response) {
             $("#id").val(response.id);
             $("#uri").val(response.uri);
@@ -162,21 +243,21 @@
         });
     };
 
-    var save = function() {
-        var id = $("#id").val();
-        var uri = $("#uri").val();
-        var data = $("#data").val();
-        var method = $("#method").val();
-        var statusCode = $("#statusCode").val();
+    let save = function() {
+        let id = $("#id").val();
+        let uri = $("#uri").val();
+        let data = $("#data").val();
+        let method = $("#method").val();
+        let statusCode = $("#statusCode").val();
 
         if(uri == "" || data == "" || method == "" || statusCode == "") {
             alert("필수 값을 입력해주세요!!");
             return;
         }
 
-        var json = JSON.stringify({
+        let json = JSON.stringify({
             "uri": uri,
-            "data": data,
+            "data": FormatTextarea(data),
             "method": method,
             "statusCode": statusCode
         });
@@ -192,14 +273,14 @@
         }
     };
 
-    var format = function() {
-        var value = FormatTextarea($("#data").val());
+    let format = function() {
+        let value = FormatTextarea($("#data").val());
         if(value != "") {
             $("#data").val(value);
         }
     };
 
-    var request = function(uri, type, callback, data) {
+    let request = function(uri, type, callback, data) {
         $.ajax({
             contentType: 'application/json',
             url: uri,
