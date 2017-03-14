@@ -1,11 +1,12 @@
 package me.wonwoo.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.wonwoo.core.domain.Fake;
 import me.wonwoo.core.repository.FakeRepository;
+import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,10 +78,15 @@ public class IndexController {
   }
 
   private String isValidJson(final String json) {
+    JsonParser jsonParser = JsonParserFactory.getJsonParser();
     try {
-      objectMapper.readTree(json);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      jsonParser.parseMap(json);
+    } catch (IllegalArgumentException e) {
+      try{
+        jsonParser.parseList(json);
+      }catch (IllegalArgumentException e1){
+        throw new RuntimeException(e1);
+      }
     }
     return json;
   }
