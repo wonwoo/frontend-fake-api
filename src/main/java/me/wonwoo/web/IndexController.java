@@ -46,11 +46,12 @@ public class IndexController {
     if (bindingResult.hasErrors()) {
       return ResponseEntity.badRequest().build();
     }
-    if (fakeRepository.findByUriAndMethod(fakeForm.getUri(), fakeForm.getMethod())
+    final String uri = fakeForm.getUri().startsWith("/") ? fakeForm.getUri() : "/" + fakeForm.getUri();
+    if (fakeRepository.findByUriAndMethod(uri, fakeForm.getMethod())
       .isPresent()) {
       throw new DuplicateException(fakeForm);
     }
-    return ResponseEntity.ok().body(fakeRepository.save(new Fake(fakeForm.getUri(),
+    return ResponseEntity.ok().body(fakeRepository.save(new Fake(uri,
       HttpMethod.resolve(fakeForm.getMethod()),
       HttpStatus.valueOf(fakeForm.getStatusCode()),
       isValidJson(fakeForm.getData()))));
