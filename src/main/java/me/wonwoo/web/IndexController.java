@@ -7,6 +7,7 @@ import me.wonwoo.core.domain.Fake;
 import me.wonwoo.core.repository.FakeRepository;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +33,8 @@ public class IndexController {
   private final ObjectMapper objectMapper;
 
   @GetMapping("/")
-  public String home(Model model) {
-    model.addAttribute("fakes", fakeRepository.findAll());
+  public String home(Model model, Pageable pageable) {
+    model.addAttribute("fakes", fakeRepository.findAll(pageable));
     return "index";
   }
 
