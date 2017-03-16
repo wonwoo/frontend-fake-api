@@ -4,7 +4,7 @@ let newStatus = function(status) {
         sock.send('ping');
     }
     if(status === "disconnected") {
-        $.blockUI();
+        $.blockUI({"message": "server disconnected. wait!"});
         alert("The server is disconnected");
     }
 };
