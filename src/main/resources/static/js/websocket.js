@@ -6,7 +6,6 @@ let newStatus = function(status) {
     }
     if(status === "disconnected") {
         $.blockUI({"message": "server disconnected. wait!"});
-        alert("The server is disconnected");
     }
 };
 
