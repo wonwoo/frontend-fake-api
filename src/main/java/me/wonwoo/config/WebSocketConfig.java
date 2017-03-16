@@ -19,7 +19,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     registry.addHandler(webSocketHandler(), "/checked")
-      .addInterceptors(new HttpSessionHandshakeInterceptor()).withSockJS();
+      .withSockJS();
   }
   @Bean
   public WebSocketHandler webSocketHandler() {
